@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.google.photos.library:google-photos-library-client:1.2.0'
+    compile 'com.google.photos.library:google-photos-library-client:1.4.0'
     compile 'com.google.oauth-client:google-oauth-client-jetty:1.29.0'
     compile 'com.google.oauth-client:google-oauth-client-java6:1.29.0'
     compile('com.google.api-client:google-api-client:1.29.0') {
@@ -50,9 +50,14 @@ sourceSets {
 }
 
 // By default, run the album demo.
-mainClassName = "com.google.photos.library.sample.demo.AlbumDemo"
+mainClassName = "com.google.photos.library.sample.demo.AlbumUploader"
 
 task runAlbum(type: JavaExec) {
+    classpath sourceSets.main.runtimeClasspath
+    main = "com.google.photos.library.sample.demos.AlbumUploader"
+}
+
+task runAlbumDemo(type: JavaExec) {
     classpath sourceSets.main.runtimeClasspath
     main = "com.google.photos.library.sample.demos.AlbumDemo"
 }

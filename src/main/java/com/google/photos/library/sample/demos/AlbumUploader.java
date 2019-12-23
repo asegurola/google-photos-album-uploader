@@ -23,6 +23,7 @@ import com.google.photos.library.sample.components.AppPanel;
 import com.google.photos.library.sample.components.CreateAlbumToolPanel;
 import com.google.photos.library.sample.components.UploadToAlbumToolPanel;
 import com.google.photos.library.sample.factories.PhotosLibraryClientFactory;
+import com.google.photos.library.sample.helpers.LogUtil;
 import com.google.photos.library.sample.helpers.UIHelper;
 import com.google.photos.library.sample.suppliers.ListAlbumsSupplier;
 import com.google.photos.library.sample.suppliers.SearchMediaItemSupplier;
@@ -37,6 +38,7 @@ import com.google.photos.types.proto.Album;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -65,24 +67,19 @@ import static com.google.photos.library.sample.helpers.UIHelper.getFormattedText
  * </ul>
  */
 public final class AlbumUploader {
-  public static final String ALBUM_TITLE = "Photos album sample app";
+  public static final String ALBUM_TITLE = "Photos Album Uploader";
   public static final String ALBUM_SAMPLE_IMAGE_RESOURCE = "/assets/album.png";
   public static final String ALBUM_INTRODUCTION =
       "<html>"
           + getFormattedText(
-              "Google Photos Library API Sample", 14 /* fontSize */, 2 /* lineMargin */)
-          + getFormattedText("Albums: read, add + create", 22 /* fontSize */, 10 /* lineMargin */)
-          + getFormattedText("This sample will cover", 12 /* fontSize */, 2 /* lineMargin */)
+              "Google Photos Folder Album Uploader", 14 /* fontSize */, 2 /* lineMargin */)
+          + getFormattedText("This app will:", 12 /* fontSize */, 2 /* lineMargin */)
           + getFormattedText(
-              " - Connecting to a Google Photos library", 12 /* fontSize */, 2 /* lineMargin */)
+              " - Create albums based on local folder structure", 12 /* fontSize */, 2 /* lineMargin */)
           + getFormattedText(
-              " - Requesting scopes from the Google Photos user",
+              " - Upload images to those albums from local folders",
               12 /* fontSize */,
               2 /* lineMargin */)
-          + getFormattedText(" - Reading the album list", 12 /* fontSize */, 2 /* lineMargin */)
-          + getFormattedText(" - Creating an album", 12 /* fontSize */, 2 /* lineMargin */)
-          + getFormattedText(
-              " - Adding media items to an album", 12 /* fontSize */, 2 /* lineMargin */)
           + "</html>";
 
   private static final List<String> REQUIRED_SCOPES =
@@ -105,6 +102,9 @@ public final class AlbumUploader {
     if (args.length > 0) {
       credentialsFile = Optional.of(args[0]);
     }
+
+    // FIXME remove this
+    credentialsFile = Optional.of("client_id.json");
 
     UIHelper.setUp();
 
@@ -155,9 +155,10 @@ public final class AlbumUploader {
       PhotosLibraryClient client) {
     return (abstractCustomView, newAlbumTitle) -> {
       try {
-        client.createAlbum(Album.newBuilder().setTitle(newAlbumTitle).build());
-        abstractCustomView.updateView();
+        // FIXME Add dialog to select a folder for uploading
+        new AlbumUploaderTask(client).uploadAlbums(new File("/Volumes/Untitled/Mis Imágenes"));
       } catch (Exception e) {
+        LogUtil.logError(e);
         JOptionPane.showMessageDialog(abstractCustomView, e.getMessage());
         abstractCustomView.showView();
       }
